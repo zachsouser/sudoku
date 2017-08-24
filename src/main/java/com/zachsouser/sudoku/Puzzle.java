@@ -1,34 +1,36 @@
+package com.zachsouser.sudoku;
+
 import java.io.*;
 import java.util.Arrays;
 /**
  * Puzzle data structure
- * 
+ *
  * @author Zach Souser
  * @version Spring 2013
  */
 public class Puzzle implements Serializable
 {
-    
+
     /** Size of the puzzle **/
-    
+
     public static int SIZE = 9;
-    
+
     /** Unknown value **/
-    
+
     public static int UNKNOWN = 0;
-    
+
     /** Serializing ID **/
-    
+
     static final long serialVersionUID = 74132;
-    
+
     /** Board and initial board **/
-    
+
     private int[][] board, initialBoard;
-    
+
     /** Givens **/
-    
+
     private boolean[][] givens;
-    
+
     /**
      * Constructor for objects of class Puzzle
      */
@@ -44,13 +46,13 @@ public class Puzzle implements Serializable
             }
         }
     }
-    
+
     /**
      * One-arg constructor. Automatically populates givens
-     * 
+     *
      * @param the initial array
      */
-    
+
     public Puzzle(int[][] init) {
         board = init;
         initialBoard = init;
@@ -63,7 +65,7 @@ public class Puzzle implements Serializable
             }
         }
     }
-    
+
     /**
      * Two-arg constructor
      * @param the initial board
@@ -81,13 +83,13 @@ public class Puzzle implements Serializable
             }
         }
     }
-    
+
     /**
      * One-param copy constructor
-     * 
+     *
      * @param p the source puzzle;
      */
-    
+
     public Puzzle(Puzzle p) {
         this.initialBoard = new int[SIZE][SIZE];
         this.board = new int[SIZE][SIZE];
@@ -102,13 +104,13 @@ public class Puzzle implements Serializable
             }
         }
     }
-    
+
     /**
      * Equals implementation
      * @param the object
      * @return if equal
      */
-    
+
     public boolean equals(Object obj) {
         boolean equal = true;
         int[][] values = ((Puzzle)obj).values();
@@ -121,8 +123,8 @@ public class Puzzle implements Serializable
         }
         return equal;
     }
-    
-    /** 
+
+    /**
      * Get the value of a cell
      * @param row
      * @param column
@@ -131,20 +133,20 @@ public class Puzzle implements Serializable
     public int get(int row, int column) {
         return board[row][column];
     }
-    
+
     /**
      * Get the box at a given index
      * @param row
      * @param column
      * @return the box
      */
-    
+
     public int[] getBox(int box) {
         int[] retVal = new int[SIZE];
         int k = 0;
         int row = box % 3;
         int col = (box - row) / 3;
-        
+
         for (int i = col * 3; i < col * 3 + 3; i++) {
             for (int j = row * 3; j < row * 3 + 3; j++) {
                 retVal[k++] = board[i][j];
@@ -152,21 +154,21 @@ public class Puzzle implements Serializable
         }
         return retVal;
     }
-    
+
     /**
      * Get the box at a given index
      * @param row
      * @param column
      * @return the box
      */
-    
+
     public int[] getBox(int row, int column) {
         return getBox(getBoxIndex(row,column));
     }
-    
+
     /**
      * Get the box index of a given row, column
-     * 
+     *
      * @param row
      * @param columm
      * @return box index
@@ -182,14 +184,14 @@ public class Puzzle implements Serializable
         if (column < 6 && row < 9) return 7;
         return 8;
     }
-    
+
     /**
      * Get the entire row from the puzzle
-     * 
+     *
      * @param the column contents
      * @return the column contents
      */
-    
+
     public int[] getColumn(int column) {
         int[] retVal = new int[SIZE];
         int k = 0;
@@ -198,34 +200,34 @@ public class Puzzle implements Serializable
         }
         return retVal;
     }
-    
+
     /**
      * Get the entire row from the puzzle
-     * 
+     *
      * @param the row number
      * @return the row contents
      */
     public int[] getRow(int row) {
         return board[row];
     }
-    
+
     /**
      * Get the two-dimensional array of givens
      * @return the givens array
      */
-    
+
     public boolean[][] givens() {
         return this.givens;
     }
-    
+
     /**
      * Hashcode implementation
      */
-    
+
     public int hashCode() {
         return 20;
     }
-    
+
     /**
      * Is the square given?
      * @param row
@@ -235,14 +237,14 @@ public class Puzzle implements Serializable
     public boolean isGiven(int row, int column) {
         return givens[row][column];
     }
-    
+
     /**
      * Is the puzzle solved?
      * Determines whether the puzzle constitutes a valid solution
-     * 
+     *
      * @return if the puzzle is solved or not
      */
-    
+
     public boolean isSolved() {
         if (numberOfUnknowns() > 0) return false;
         boolean solved = true;
@@ -250,8 +252,8 @@ public class Puzzle implements Serializable
             int[] row = getRow(i);
             int[] col = getColumn(i);
             int[] box = getBox(i);
-            
-            
+
+
             for (int j = 0; j < SIZE; j++) {
                 boolean foundRow = false;
                 boolean foundCol = false;
@@ -263,16 +265,16 @@ public class Puzzle implements Serializable
                 }
                 solved &= foundRow && foundCol && foundBox;
             }
-            
+
         }
         return solved;
     }
-    
+
     /**
      * Get the number of unknown cells
      * @return the count
      */
-    
+
     public int numberOfUnknowns() {
         int k = 0;
         for (int i = 0; i < SIZE; i++) {
@@ -280,52 +282,52 @@ public class Puzzle implements Serializable
                 if (board[i][j] == UNKNOWN) k++;
             }
         }
-        
+
         return k;
-        
+
     }
-    
+
     /**
      * Set the given status of a cell
-     * 
+     *
      * @param newGiven the true/false value of given
      * @param row
      * @param column
      * @return the new given
      */
-    
+
     public boolean set(boolean newGiven, int row, int column) {
         this.givens[row][column] = newGiven;
         return newGiven;
     }
-    
+
     /**
      * Set the board's value at row, column to newValue
-     * 
+     *
      * @param newValue the new value
      * @param row the row
      * @param column the column
      * @return the new value
      */
-    
+
     public int set(int newValue, int row, int column) {
         this.board[row][column] = newValue;
         return newValue;
     }
-    
+
     /**
      * Return the size of the puzzle
      * @return the size
      */
-    
+
     public int size() {
         return SIZE;
     }
-    
+
     /**
      * toString implementation
      */
-    
+
     public String toString() {
         String s = "\n+===+===+===+===+===+===+===+===+===+\n";
         for (int i = 0; i < SIZE; i++) {
@@ -338,27 +340,27 @@ public class Puzzle implements Serializable
             if (i % 3 == 2) s += "\n+===+===+===+===+===+===+===+===+===+\n";
             else s += "\n+---+---+---+---+---+---+---+---+---+\n";
         }
-        
+
         return s;
     }
-    
+
     /**
      * Get the values for the board
      * @reutrn the two-dimensional board array
      */
-    
+
     public int[][] values() {
         return board;
     }
-    
+
     /**
      * Reset the board to its initial state
      */
-    
-    public void reset() { 
+
+    public void reset() {
         board = initialBoard;
     }
-    
+
     /**
      * Unserialize a file
      * @param filename
@@ -387,17 +389,17 @@ public class Puzzle implements Serializable
         catch (IOException ex) {
             System.err.println("Unsuccessful deserialization: " + ex);
         }
-        if (restored == null) 
+        if (restored == null)
             System.err.println("Unsuccessful deserialization: restored == null");
         return restored;
     }
-    
+
     /**
      * Serialize the puzzle
      * @param filename
      * @param puzzle
      */
-    
+
     public static void savePuzzle(String filename, Puzzle puzzle) {
         if (filename == null) filename = "puzzle.ser";
         // Serialize the graph.
@@ -438,4 +440,4 @@ public class Puzzle implements Serializable
             System.err.println("Unsuccessful deserialization: " + ex);
         }
     }
-}   
+}

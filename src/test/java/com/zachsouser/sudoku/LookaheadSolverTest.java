@@ -1,23 +1,23 @@
 
-
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import com.zachsouser.sudoku.*;
 
 /**
- * The test class InformedSolverTest.
+ * The test class LookaheadSolverTest.
  *
  * @author  (your name)
  * @version (a version number or a date)
  */
-public class InformedSolverTest
+public class LookaheadSolverTest
 {
     Puzzle p1, pEasy,pMedium,pHard,pEvil, psolved;
     int[][] b1,b2,bsolved;
     boolean[][] g1;
-    InformedSolver n;
-    
+    LookaheadSolver n;
+
     /**
      * Sets up the test fixture.
      *
@@ -26,7 +26,7 @@ public class InformedSolverTest
     @Before
     public void setUp()
     {
-       
+
         b1 = new int[][] {
             {0,3,7,2,0,0,1,0,6},
             {0,0,0,1,0,0,0,3,4},
@@ -38,7 +38,7 @@ public class InformedSolverTest
             {2,9,0,0,0,8,0,0,0},
             {8,0,3,0,0,9,6,1,0}
         };
-        
+
         bsolved = new int[][] {
             {4,3,7,2,8,5,1,9,6},
             {9,2,8,1,7,6,5,3,4},
@@ -50,20 +50,20 @@ public class InformedSolverTest
             {2,9,1,7,6,8,4,5,3},
             {8,4,3,5,2,9,6,1,7}
         };
-        
+
         g1 = new boolean[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j< 9; j++) {
                 if (b1[i][j] == 0) g1[i][j] = false;
             }
         }
-        
+
         p1 = new Puzzle(b1,g1);
         psolved = new Puzzle(bsolved,g1);
-        
-        
-        
-        n = new InformedSolver();
+
+
+
+        n = new LookaheadSolver();
     }
 
     /**
@@ -75,12 +75,12 @@ public class InformedSolverTest
     public void tearDown()
     {
     }
-    
+
     @Test
     public void solve() {
         assertEquals(psolved,n.solve(p1));
     }
-    
+
     @Test
     public void candidates() {
         int[] candidates = n.candidates(p1,0,0);
@@ -88,12 +88,11 @@ public class InformedSolverTest
         assertEquals(candidates[0],4);
         assertEquals(candidates[1],9);
     }
-    
+
     @Test
     public void backtrackCounter() {
         n.solve(p1);
-        // No backtracking done sometimes!
-        // assert(n.getBacktrackCounter() > 0);
+        assert(n.getBacktrackCounter() > 0);
         n.resetBacktrackCounter();
         assertEquals(n.getBacktrackCounter(), 0);
     }

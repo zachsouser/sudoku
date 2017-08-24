@@ -1,9 +1,11 @@
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import com.zachsouser.sudoku.*;
 
 /**
  * The test class PuzzleTest.
@@ -13,11 +15,11 @@ import org.junit.Test;
  */
 public class PuzzleTest
 {
-    
+
     Puzzle p1,psolved;
     int[][] b1,bsolved;
     boolean[][] g1;
-    
+
     /**
      * Sets up the test fixture.
      *
@@ -26,7 +28,7 @@ public class PuzzleTest
     @Before
     public void setUp()
     {
-       
+
         b1 = new int[][] {
             {0,3,7,2,0,0,1,0,6},
             {0,0,0,1,0,0,0,3,4},
@@ -38,15 +40,15 @@ public class PuzzleTest
             {2,9,0,0,0,8,0,0,0},
             {8,0,3,0,0,9,6,1,0}
         };
-        
-            
+
+
         g1 = new boolean[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j< 9; j++) {
                 if (b1[i][j] == 0) g1[i][j] = false;
             }
         }
-        
+
         bsolved = new int[][] {
             {2,4,8,3,9,5,7,1,6},
             {5,7,1,6,2,8,3,4,9},
@@ -58,7 +60,7 @@ public class PuzzleTest
             {1,9,5,2,8,6,4,3,7},
             {4,2,7,9,5,3,8,6,1}
         };
-        
+
         p1 = new Puzzle(b1,g1);
         psolved = new Puzzle(bsolved);
     }
@@ -72,18 +74,18 @@ public class PuzzleTest
     public void tearDown()
     {
     }
-    
+
     /**
      * Test copy constructor
      */
-    
-    @Test 
+
+    @Test
     public void copyConstructor() {
          Puzzle puzz = new Puzzle(p1);
          assertEquals(puzz,p1);
     }
-    
-    @Test 
+
+    @Test
     public void getBox() {
         int[][] expected = new int[][] {
             {0,3,7,0,0,0,1,5,0},
@@ -103,7 +105,7 @@ public class PuzzleTest
             }
         }
     }
-    
+
     @Test
     public void getColumn() {
         int[][] expected = new int[][] {
@@ -117,7 +119,7 @@ public class PuzzleTest
             {0,3,0,4,7,0,8,0,1},
             {6,4,0,0,1,2,9,0,0}
         };
-        
+
         for (int i = 0; i < expected.length; i++) {
             int[] result = p1.getColumn(i);
             for (int j = 0; j < expected[i].length; j++) {
@@ -125,7 +127,7 @@ public class PuzzleTest
             }
         }
     }
-    
+
     @Test
     public void getRow() {
         for (int i = 0; i < b1.length; i++) {
@@ -135,14 +137,14 @@ public class PuzzleTest
             }
         }
     }
-    
+
     @Test
     public void isSolved() {
         System.out.println(psolved);
         assert(psolved.isSolved());
         assertFalse(p1.isSolved());
     }
-    
+
     @Test
     public void noArgConstructor() {
         Puzzle p = new Puzzle();
@@ -155,38 +157,38 @@ public class PuzzleTest
             }
         }
     }
-    
+
     @Test
     public void numberOfUnknowns() {
         assertEquals(0,psolved.numberOfUnknowns());
         assertEquals(45,p1.numberOfUnknowns());
     }
-    
+
     @Test
     public void oneParamConstructor() {
         Puzzle p = new Puzzle(bsolved);
         assertEquals(p,psolved);
     }
-    
+
     @Test
     public void reset() {
         Puzzle test1 = new Puzzle(b1,g1);
         Puzzle test2 = new Puzzle(b1,g1);
         test1.set(9,0,1);
         System.out.println("\n\n-- " + test1.get(0,1) + " - " + test2.get(0,1));
-        
+
         assertFalse(test1.equals(test2));
 
         test1.reset();
         assertEquals(test1,test2);
     }
-    
+
     @Test
     public void saveRetrieveTest() {
         Puzzle.savePuzzle("test.ser",p1);
         assertEquals(p1,Puzzle.retrievePuzzle("test.ser"));
     }
-    
+
     @Test
     public void set() {
         p1.set(3,0,1);
@@ -194,17 +196,17 @@ public class PuzzleTest
         assertEquals(p1.get(0,1),3);
         assert(p1.isGiven(0,1));
     }
-    
-    @Test   
+
+    @Test
     public void toStringTest() {
         System.out.println(p1);
     }
-    
+
     @Test
     public void twoParamConstructor() {
         assertEquals(p1,new Puzzle(b1,g1));
     }
-    
-    
-    
+
+
+
 }

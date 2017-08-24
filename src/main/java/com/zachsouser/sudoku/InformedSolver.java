@@ -1,20 +1,30 @@
-import java.util.Random;
-/**
- * Solve a sudoku puzzle by backtracking when any square is out of moves
- * @author Zach Souser 
- * @version Spring 2013
- */
+package com.zachsouser.sudoku;
 
-public class LookaheadSolver extends Solver
+/**
+ * Solver that backtracks when the most constrained square has no options.
+ * Otherwise, chooses the most constrained square
+ *
+ * @author (your name)
+ * @version (a version number or a date)
+ */
+public class InformedSolver extends Solver
 {
+		public InformedSolver() {
+			super();
+		}
+
+		public InformedSolver(Display display) {
+				super(display);
+		}
+
     /**
      * Generate a list of candidates for a given cell
-     * 
+     *
      * @param puzzle the puzzle
      * @param row the row
      * @param col the column
      */
-    
+
     public int[] candidates(Puzzle puzzle, int row, int col) {
         int[] tempCandidates = new int[Puzzle.SIZE];
         int ncandidates = 0;
@@ -24,7 +34,7 @@ public class LookaheadSolver extends Solver
         for (int i = 1; i < Puzzle.SIZE+1; i++) {
             boolean found = false;
             for (int j = 0; j < Puzzle.SIZE; j++) {
-                found |= rowData[j] == i || colData[j] == i || boxData[j] == i;    
+                found |= rowData[j] == i || colData[j] == i || boxData[j] == i;
             }
             if (!found) tempCandidates[ncandidates++] = i;
         }
@@ -32,72 +42,70 @@ public class LookaheadSolver extends Solver
         System.arraycopy(tempCandidates,0,candidates,0,ncandidates);
         return candidates;
     }
-    
-    /** 
+
+    /**
      * Get the backtrack counter
      * @return the backtrack counter
      */
-    
+
     public int getBacktrackCounter() {
         return NUM_BACKTRACKS;
     }
-    
+
     /**
      * Reset the backtrack counter
      */
-    
+
     public int resetBacktrackCounter() {
         NUM_BACKTRACKS = 0;
         return 0;
     }
-    
+
     /**
      * Determine the next cell to modify
-     * 
+     *
      * @param the puzzle
      * @return the cell as {row, col}
      */
-    
+
     public int[] nextCell(Puzzle puzzle) {
-        int i = 0;
-        int j = 0;
-        Random r = new Random();
-        int[][] values = puzzle.values();
-        while (values[i][j] != Puzzle.UNKNOWN) {
-            i = r.nextInt(9);
-            j = r.nextInt(9);
+        int[][][] allCandidates = new int[Puzzle.SIZE][Puzzle.SIZE][];
+        int minSize = 10;
+        int mini = 0, minj = 0;
+        for (int i = 0; i < Puzzle.SIZE; i++) {
+            for (int j = 0; j < Puzzle.SIZE; j++) {
+                allCandidates[i][j] = candidates(puzzle,i,j);
+                if (allCandidates[i][j].length == 0 && puzzle.get(i,j) == Puzzle.UNKNOWN) {
+                    return new int[] {-1,-1};
+                }
+                if (puzzle.get(i,j) == 0 && allCandidates[i][j].length < minSize) {
+                    mini = i;
+                    minj = j;
+                    minSize = allCandidates[i][j].length;
+                }
+            }
         }
-        return new int[] {i,j};
+        return new int[] {mini,minj};
     }
-    
+
     /**
      * Solve the sudoku puzzle
      * @param puzzle the puzzle to solve
      * @return the solved puzzle
      */
-    
+
     public Puzzle solve(Puzzle puzzle) {
+				this.display(puzzle);
         if (puzzle.isSolved()) return puzzle;
-        int[][][] allCandidates = new int[Puzzle.SIZE][Puzzle.SIZE][];
         int[] square = nextCell(puzzle);
-        for (int i = 0; i < Puzzle.SIZE; i++) {
-            for (int j = 0; j < Puzzle.SIZE; j++) {
-                allCandidates[i][j] = candidates(puzzle,i,j);
-                if (allCandidates[i][j].length == 0 && puzzle.get(i,j) == 0) {
-                    NUM_BACKTRACKS++;
-                    return puzzle;
-                }
-            }
-        }
-        int[] candidates = allCandidates[square[0]][square[1]];
-        if (candidates.length == 0) {
+        if (square[0] == -1 || square[1] == -1) {
             NUM_BACKTRACKS++;
             return puzzle;
         }
+        int[] candidates = candidates(puzzle,square[0],square[1]);
         for (int i = 0; i < candidates.length; i++) {
             puzzle.set(candidates[i],square[0],square[1]);
             puzzle = solve(puzzle);
-            System.out.println(puzzle);
             if (puzzle.isSolved()) return puzzle;
             puzzle.set(Puzzle.UNKNOWN,square[0],square[1]);
         }
